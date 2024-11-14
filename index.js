@@ -3,5 +3,6 @@ const Timer = require("./class/Timer.js")
 
 module.exports = {
 	BarGenerator,
-	Timer
+	Timer,
+	math: require("./math/index,js")
 }
