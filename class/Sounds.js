@@ -28,6 +28,9 @@ class Sound extends require("events") {
 			.write("string", action)
 			.send(player.socket)
 	}
+	emitSoundPlaybackAll(action = Sound.playbackActions.play) {
+		this.emit("playbackAll", action)
+	}
 }
 
 class SoundManager {
@@ -65,6 +68,13 @@ class SoundManager {
 			if (this.game) {
 				this.game.players.forEach(player => {
 					sound.emitSoundPlayback(player, Sound.playbackActions.destroy)
+				})
+			}
+		})
+		sound.on("playbackAll", (action) => {
+			if (this.game) {
+				this.game.players.forEach(player => {
+					sound.emitSoundPlayback(player, action)
 				})
 			}
 		})
