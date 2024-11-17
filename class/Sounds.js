@@ -80,9 +80,9 @@ class SoundManager {
 		})
 	}
 	sendSoundDefinitions(player, sounds = [...this.sounds]) {
-		const soundDefiniton = new PacketBuilder(23)
-		soundDefiniton.write("uint32", sounds.length)
 		sounds.forEach(sound => {
+			const soundDefiniton = new PacketBuilder(23)
+			soundDefiniton.write("uint32", 1)
 			soundDefiniton.write("uint32", sound.netId)
 			soundDefiniton.write("string", sound.uuid)
 			soundDefiniton.write("float", sound.position.x)
