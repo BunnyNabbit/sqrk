@@ -3,6 +3,7 @@ const Timer = require("./class/Timer.js")
 const TextNode = require("./class/TextNode.js")
 const getFontLength = require("./getFontLength.js")
 const sounds = require("./class/Sounds.js")
+const ConstrainedTextDisplay = require("./class/ConstrainedTextDisplay.js")
 
 module.exports = {
 	BarGenerator,
@@ -11,5 +12,6 @@ module.exports = {
 	math: require("./math/index.js"),
 	getFontLength,
 	Sound: sounds.Sound,
-	SoundManager: sounds.SoundManager
+	SoundManager: sounds.SoundManager,
+	ConstrainedTextDisplay
 }
