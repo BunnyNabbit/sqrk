@@ -11,25 +11,53 @@ class Sound extends require("events") {
 		this.isGlobal = data.isGlobal ?? false
 		this.uuid = data.uuid
 		this.position = data.position ?? new Vector3(1, 2, 3)
+		if (data.playing) {
+			this.playbackPosition = 0
+		}
 		this.destroyed = false
 	}
 	destroy() {
 		this.destroyed = true
 		this.emit("destroy")
 	}
+	static noopHandler = () => { }
 	static playbackActions = {
-		play: "play",
-		stop: "stop",
-		destroy: "destroy"
+		play: ["play", Sound.noopHandler],
+		stop: ["stop", Sound.noopHandler],
+		destroy: ["destroy", Sound.noopHandler],
+		volume: ["volume", (packet, data) => {
+			packet.write("float", data)
+		}],
+		pitch: ["pitch", (packet, data) => {
+			packet.write("float", data)
+		}],
+		loop: ["loop", (packet, data) => {
+			packet.write("bool", data)
+		}],
+		range: ["range", (packet, data) => {
+			packet.write("float", data)
+		}],
+		global: ["global", (packet, data) => {
+			packet.write("bool", data)
+		}],
+		position: ["position", (packet, data) => {
+			packet.write("float", data.x)
+			packet.write("float", data.y)
+			packet.write("float", data.z)
+		}],
+		sound: ["sound", (packet, data) => {
+			packet.write("string", data)
+		}]
 	}
-	emitSoundPlayback(player, action = Sound.playbackActions.play) {
-		new PacketBuilder(22)
-			.write("uint32", this.netId)
-			.write("string", action)
-			.send(player.socket)
+	emitSoundAction(player, action = Sound.playbackActions.play, data) {
+		const packet = new PacketBuilder(22)
+		packet.write("uint32", this.netId)
+		packet.write("string", action[0])
+		action[1](packet, data) // call action handler
+		packet.send(player.socket)
 	}
-	emitSoundPlaybackAll(action = Sound.playbackActions.play) {
-		this.emit("playbackAll", action)
+	emitSoundActionAll(action = Sound.playbackActions.play, data) {
+		this.emit("actionAll", action, data)
 	}
 }
 
@@ -51,7 +79,8 @@ class SoundManager {
 		loop: ["C", "bool"],
 		range: ["D", "float"],
 		is3D: ["E", "bool"],
-		isGlobal: ["F", "bool"]
+		isGlobal: ["F", "bool"],
+		playbackPosition: ["G", "float"]
 	}
 	newSound(sound) {
 		sound.netId = this.nextNetId
@@ -67,14 +96,14 @@ class SoundManager {
 			this.sounds.delete(sound)
 			if (this.game) {
 				this.game.players.forEach(player => {
-					sound.emitSoundPlayback(player, Sound.playbackActions.destroy)
+					sound.emitSoundAction(player, Sound.playbackActions.destroy)
 				})
 			}
 		})
-		sound.on("playbackAll", (action) => {
+		sound.on("actionAll", (action) => {
 			if (this.game) {
 				this.game.players.forEach(player => {
-					sound.emitSoundPlayback(player, action)
+					sound.emitSoundAction(player, action)
 				})
 			}
 		})
