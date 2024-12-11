@@ -13,5 +13,6 @@ module.exports = {
 	getFontLength,
 	Sound: sounds.Sound,
 	SoundManager: sounds.SoundManager,
-	ConstrainedTextDisplay
+	ConstrainedTextDisplay,
+	packets: require("./packets/index.js")
 }
