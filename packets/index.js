@@ -1,6 +1,6 @@
 const { PacketBuilder } = require("node-hill-s")
 
-function killBrick(brick, time = 10000) { // Sends a brick kill packet to all connected clients
+function killBrick(brick, time = 10000, world) { // Sends a brick kill packet to all connected clients
 	new PacketBuilder("Brick")
 		.write("uint32", brick.netId)
 		.write("string", "kill")
