@@ -15,6 +15,7 @@ class Timer extends EventEmitter {
 		this.timeEnd = Date.now()
 		this.active = false
 		this.timeout = null
+		this.pauseTime = null
 	}
 
 	/**
@@ -23,6 +24,7 @@ class Timer extends EventEmitter {
 	 * @returns {number} The remaining time in milliseconds.
 	 */
 	get timeLeft() {
+		if (this.pauseTime) return this.pauseTime
 		if (!this.active) return 0
 		return Math.max(this.timeEnd - Date.now(), 0)
 	}
@@ -44,6 +46,7 @@ class Timer extends EventEmitter {
 	 * Clears the current timeout and deactivates the timer.
 	 */
 	clear() {
+		this.pauseTime = null
 		this.active = false
 		clearTimeout(this.timeout)
 	}
@@ -68,6 +71,32 @@ class Timer extends EventEmitter {
 		this.timeStart = Date.now()
 		this.timeEnd = this.timeStart + timeEnd
 		this.update()
+	}
+
+	/**
+	 * Pauses the timer, retaining timer state for resumption.
+	 */
+	pause() {
+		this.pauseTime = this.timeLeft
+		this.active = false
+		clearTimeout(this.timeout)
+	}
+
+	/**
+	 * Resumes the timer from a paused state.
+	 */
+	resume() {
+		if (this.pauseTime) {
+			this.timeStart = Date.now()
+			this.timeEnd = Date.now() + this.pauseTime
+			this.timeout = setTimeout(() => {
+				this.active = false
+				this.emit("timeout")
+			}, this.pauseTime)
+			this.pauseTime = null
+			this.active = true
+			this.emit("update")
+		}
 	}
 }
 
