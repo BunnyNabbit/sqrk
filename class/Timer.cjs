@@ -1,14 +1,10 @@
-const EventEmitter = require("events").EventEmitter
+const { EventEmitter } = require("events")
 
-/**
- * Timer class that extends EventEmitter to provide timing functionality.
- * 
+/**Timer class that extends EventEmitter to provide timing functionality.
  * @extends EventEmitter
  */
 class Timer extends EventEmitter {
-	/**
-	 * Creates an instance of Timer.
-	 */
+	/** Creates an instance of Timer. */
 	constructor() {
 		super()
 		this.timeStart = Date.now()
@@ -17,10 +13,7 @@ class Timer extends EventEmitter {
 		this.timeout = null
 		this.pauseTime = null
 	}
-
-	/**
-	 * Gets the remaining time in milliseconds.
-	 * 
+	/**Gets the remaining time in milliseconds.
 	 * @returns {number} The remaining time in milliseconds.
 	 */
 	get timeLeft() {
@@ -28,10 +21,7 @@ class Timer extends EventEmitter {
 		if (!this.active) return 0
 		return Math.max(this.timeEnd - Date.now(), 0)
 	}
-
-	/**
-	 * Updates the timer, setting a new timeout and emitting the "update" event.
-	 */
+	/** Updates the timer, setting a new timeout and emitting the "update" event. */
 	update() {
 		this.clear()
 		this.active = true
@@ -41,19 +31,13 @@ class Timer extends EventEmitter {
 		}, this.timeLeft)
 		this.emit("update")
 	}
-
-	/**
-	 * Clears the current timeout and deactivates the timer.
-	 */
+	/** Clears the current timeout and deactivates the timer. */
 	clear() {
 		this.pauseTime = null
 		this.active = false
 		clearTimeout(this.timeout)
 	}
-
-	/**
-	 * Extends the timer by a specified number of milliseconds.
-	 * 
+	/**Extends the timer by a specified number of milliseconds.
 	 * @param {number} ms - The number of milliseconds to extend the timer by.
 	 */
 	extend(ms) {
@@ -61,10 +45,7 @@ class Timer extends EventEmitter {
 		this.update(ms)
 		this.emit("extend", ms)
 	}
-
-	/**
-	 * Sets the timer to end at a specified time.
-	 * 
+	/**Sets the timer to end at a specified time.
 	 * @param {number} timeEnd - The time in milliseconds when the timer should end.
 	 */
 	set(timeEnd) {
@@ -72,19 +53,13 @@ class Timer extends EventEmitter {
 		this.timeEnd = this.timeStart + timeEnd
 		this.update()
 	}
-
-	/**
-	 * Pauses the timer, retaining timer state for resumption.
-	 */
+	/** Pauses the timer, retaining timer state for resumption. */
 	pause() {
 		this.pauseTime = this.timeLeft
 		this.active = false
 		clearTimeout(this.timeout)
 	}
-
-	/**
-	 * Resumes the timer from a paused state.
-	 */
+	/** Resumes the timer from a paused state. */
 	resume() {
 		if (this.pauseTime) {
 			this.timeStart = Date.now()

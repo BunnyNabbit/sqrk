@@ -1,12 +1,14 @@
 const { Bot, Vector3 } = require("node-hill-s")
 
 class TextNode {
+
 	constructor(game, position = new Vector3(0, 0, 0), text) {
 		this.game = game
 		this.bot = null
 		this.position = position
 		this.setText(text)
 	}
+
 	enableBot() {
 		if (this.bot) return false
 		this.bot = new Bot("")
@@ -14,11 +16,13 @@ class TextNode {
 		this.bot.scale = new Vector3(0, 0, 0)
 		this.game.newBot(this.bot)
 	}
+
 	disableBot() {
 		if (!this.bot) return false
 		this.bot.destroy()
 		this.bot = null
 	}
+
 	setText(text) {
 		if (text) {
 			this.enableBot()

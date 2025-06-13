@@ -9,5 +9,5 @@ function killBrick(brick, time = 10000) { // Sends a brick kill packet to all co
 }
 
 module.exports = {
-	killBrick
+	killBrick,
 }

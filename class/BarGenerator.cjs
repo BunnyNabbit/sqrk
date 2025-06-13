@@ -1,4 +1,5 @@
 class BarGenerator {
+
 	constructor(props) {
 		this.fullColor = props.fullColor ?? "\\c5"
 		this.emptyColor = props.emptyColor ?? "\\c0"

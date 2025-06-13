@@ -1,6 +1,8 @@
 const { PacketBuilder, Vector3 } = require("node-hill-s")
+const EventEmitter = require("node:events")
 
-class Sound extends require("events") {
+class Sound extends EventEmitter {
+
 	constructor(data) {
 		super()
 		this.volume = data.volume ?? 1
@@ -11,15 +13,15 @@ class Sound extends require("events") {
 		this.isGlobal = data.isGlobal ?? false
 		this.uuid = data.uuid
 		this.position = data.position ?? new Vector3(1, 2, 3)
-		if (data.playing) {
-			this.playbackPosition = 0
-		}
+		if (data.playing) this.playbackPosition = 0
 		this.destroyed = false
 	}
+
 	destroy() {
 		this.destroyed = true
 		this.emit("destroy")
 	}
+
 	static noopHandler = () => { }
 	static playbackActions = {
 		play: ["play", Sound.noopHandler],
@@ -47,8 +49,9 @@ class Sound extends require("events") {
 		}],
 		sound: ["sound", (packet, data) => {
 			packet.write("string", data)
-		}]
+		}],
 	}
+
 	emitSoundAction(player, action = Sound.playbackActions.play, data) {
 		const packet = new PacketBuilder(22)
 		packet.write("uint32", this.netId)
@@ -56,6 +59,7 @@ class Sound extends require("events") {
 		action[1](packet, data) // call action handler
 		packet.send(player.socket)
 	}
+
 	emitSoundActionAll(action = Sound.playbackActions.play, data) {
 		this.emit("actionAll", action, data)
 	}
@@ -82,6 +86,7 @@ class SoundManager {
 		isGlobal: ["F", "bool"],
 		playbackPosition: ["G", "float"]
 	}
+
 	newSound(sound) {
 		sound.netId = this.nextNetId
 		this.sounds.add(sound)
@@ -108,6 +113,7 @@ class SoundManager {
 			}
 		})
 	}
+
 	sendSoundDefinitions(player, sounds = [...this.sounds]) {
 		sounds.forEach(sound => {
 			const soundDefiniton = new PacketBuilder(23)
@@ -120,16 +126,12 @@ class SoundManager {
 			let attributeString = ""
 			for (const [key, value] of Object.entries(sound)) {
 				const mapping = SoundManager.attributePacketMapping[key]
-				if (mapping) {
-					attributeString += mapping[0]
-				}
+				if (mapping) attributeString += mapping[0]
 			}
 			soundDefiniton.write("string", attributeString)
 			for (const [key, value] of Object.entries(sound)) {
 				const mapping = SoundManager.attributePacketMapping[key]
-				if (mapping) {
-					soundDefiniton.write(mapping[1], value)
-				}
+				if (mapping) soundDefiniton.write(mapping[1], value)
 			}
 			soundDefiniton.send(player.socket)
 		})
@@ -138,5 +140,5 @@ class SoundManager {
 
 module.exports = {
 	SoundManager,
-	Sound
+	Sound,
 }

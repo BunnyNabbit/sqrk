@@ -1,13 +1,16 @@
-const getFontLength = require("../getFontLength.js")
+const getFontLength = require("../getFontLength.cjs")
 
 class ConstrainedTextDisplay {
+
 	constructor(sections, maxFontLength = 350) {
 		this.sections = sections
 		this.maxFontLength = maxFontLength
 	}
+
 	get sideLengthTarget() {
 		return this.maxFontLength / 2
 	}
+
 	render(value = 0) {
 		const filteredPreviousSections = this.sections.filter(section => section[2] <= value)
 		const filteredNextSections = this.sections.filter(section => section[2] > value)
@@ -50,18 +53,12 @@ class ConstrainedTextDisplay {
 
 		for (const section of sections) {
 			const text = reverse ? section[0].split("").reverse().join("") : section[0]
-			if (!reverse) {
-				str = `${str}${section[1]}`
-			}
+			if (!reverse) str = `${str}${section[1]}`
 			for (const char of text) {
 				currentLength += getFontLength(char)
 				if (currentLength > lengthTarget) {
-					if (lastAddedWasColorCode) {
-						return str // Avoid adding color code at the very end
-					}
-					if (reverse) {
-						return `${section[1]}${str}`
-					}
+					if (lastAddedWasColorCode) return str // Avoid adding color code at the very end
+					if (reverse) return `${section[1]}${str}`
 					return str
 				}
 
