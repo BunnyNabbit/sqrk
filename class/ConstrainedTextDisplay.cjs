@@ -1,7 +1,7 @@
 const getFontLength = require("../getFontLength.cjs")
 
 class ConstrainedTextDisplay {
-
+	/** */
 	constructor(sections, maxFontLength = 350) {
 		this.sections = sections
 		this.maxFontLength = maxFontLength
@@ -12,32 +12,27 @@ class ConstrainedTextDisplay {
 	}
 
 	render(value = 0) {
-		const filteredPreviousSections = this.sections.filter(section => section[2] <= value)
-		const filteredNextSections = this.sections.filter(section => section[2] > value)
+		const filteredPreviousSections = this.sections.filter((section) => section[2] <= value)
+		const filteredNextSections = this.sections.filter((section) => section[2] > value)
 		const startingSection = filteredNextSections[0]
-		const previousSections = filteredPreviousSections.filter(section => section !== startingSection).reverse()
-		const nextSections = filteredNextSections.filter(section => section !== startingSection)
+		const previousSections = filteredPreviousSections.filter((section) => section !== startingSection).reverse()
+		const nextSections = filteredNextSections.filter((section) => section !== startingSection)
 
 		const sectionLength = getFontLength(startingSection[0])
 		const valueOffset = previousSections[0] ? previousSections[0][2] : 0
-		const sectionMiddlePointLength = (value - valueOffset) / (startingSection[2] - valueOffset) * sectionLength
+		const sectionMiddlePointLength = ((value - valueOffset) / (startingSection[2] - valueOffset)) * sectionLength
 
 		let middlePointStartIndex = 0
-		for (let i = 0; i < startingSection[0].length; i++) { // iterate via index for cleaner slice later
+		for (let i = 0; i < startingSection[0].length; i++) {
+			// iterate via index for cleaner slice later
 			if (getFontLength(startingSection[0].slice(0, i + 1)) > sectionMiddlePointLength) {
 				middlePointStartIndex = i
 				break
 			}
 		}
 
-		const leftString = ConstrainedTextDisplay.buildString(
-			[...[startingSection[0].slice(0, middlePointStartIndex)].map(text => [text, startingSection[1]]), ...previousSections],
-			true, this.sideLengthTarget
-		).replace(/\\c\d+\\c\d+/g, (match) => match.slice(0, 3)) //regex replace to avoid multiple color codes
-		const rightString = ConstrainedTextDisplay.buildString(
-			[[startingSection[0].slice(middlePointStartIndex), startingSection[1]], ...nextSections],
-			false, this.sideLengthTarget
-		).replace(/\\c\d+\\c\d+/g, (match) => match.slice(0, 3)) //regex replace to avoid multiple color codes
+		const leftString = ConstrainedTextDisplay.buildString([...[startingSection[0].slice(0, middlePointStartIndex)].map((text) => [text, startingSection[1]]), ...previousSections], true, this.sideLengthTarget).replace(/\\c\d+\\c\d+/g, (match) => match.slice(0, 3)) //regex replace to avoid multiple color codes
+		const rightString = ConstrainedTextDisplay.buildString([[startingSection[0].slice(middlePointStartIndex), startingSection[1]], ...nextSections], false, this.sideLengthTarget).replace(/\\c\d+\\c\d+/g, (match) => match.slice(0, 3)) //regex replace to avoid multiple color codes
 
 		const middle = "\\c6|"
 		// Ensure no consecutive color codes around the middle:
@@ -62,7 +57,8 @@ class ConstrainedTextDisplay {
 					return str
 				}
 
-				if (char !== "") { // Only add if not an empty string
+				if (char !== "") {
+					// Only add if not an empty string
 					str = reverse ? `${char}${str}` : `${str}${char}`
 					lastAddedWasColorCode = false
 				}

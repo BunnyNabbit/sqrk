@@ -1,5 +1,5 @@
 class BarGenerator {
-
+	/** */
 	constructor(props) {
 		this.fullColor = props.fullColor ?? "\\c5"
 		this.emptyColor = props.emptyColor ?? "\\c0"
@@ -10,7 +10,7 @@ class BarGenerator {
 	generate(quantity, maxQuantity) {
 		// Give us a percentage represented in integer number of bars
 		quantity = Math.min(quantity, maxQuantity)
-		const percentageFull = Math.max(Math.floor(quantity / maxQuantity * this.barLength), 0)
+		const percentageFull = Math.max(Math.floor((quantity / maxQuantity) * this.barLength), 0)
 		const remainingEmpty = this.barLength - percentageFull
 
 		if (percentageFull) {

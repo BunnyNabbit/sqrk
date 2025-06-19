@@ -2,7 +2,7 @@ const { PacketBuilder, Vector3 } = require("node-hill-s")
 const EventEmitter = require("node:events")
 
 class Sound extends EventEmitter {
-
+	/** */
 	constructor(data) {
 		super()
 		this.volume = data.volume ?? 1
@@ -22,34 +22,55 @@ class Sound extends EventEmitter {
 		this.emit("destroy")
 	}
 
-	static noopHandler = () => { }
+	static noopHandler = () => {}
 	static playbackActions = {
 		play: ["play", Sound.noopHandler],
 		stop: ["stop", Sound.noopHandler],
 		destroy: ["destroy", Sound.noopHandler],
-		volume: ["volume", (packet, data) => {
-			packet.write("float", data)
-		}],
-		pitch: ["pitch", (packet, data) => {
-			packet.write("float", data)
-		}],
-		loop: ["loop", (packet, data) => {
-			packet.write("bool", data)
-		}],
-		range: ["range", (packet, data) => {
-			packet.write("float", data)
-		}],
-		global: ["global", (packet, data) => {
-			packet.write("bool", data)
-		}],
-		position: ["position", (packet, data) => {
-			packet.write("float", data.x)
-			packet.write("float", data.y)
-			packet.write("float", data.z)
-		}],
-		sound: ["sound", (packet, data) => {
-			packet.write("string", data)
-		}],
+		volume: [
+			"volume",
+			(packet, data) => {
+				packet.write("float", data)
+			},
+		],
+		pitch: [
+			"pitch",
+			(packet, data) => {
+				packet.write("float", data)
+			},
+		],
+		loop: [
+			"loop",
+			(packet, data) => {
+				packet.write("bool", data)
+			},
+		],
+		range: [
+			"range",
+			(packet, data) => {
+				packet.write("float", data)
+			},
+		],
+		global: [
+			"global",
+			(packet, data) => {
+				packet.write("bool", data)
+			},
+		],
+		position: [
+			"position",
+			(packet, data) => {
+				packet.write("float", data.x)
+				packet.write("float", data.y)
+				packet.write("float", data.z)
+			},
+		],
+		sound: [
+			"sound",
+			(packet, data) => {
+				packet.write("string", data)
+			},
+		],
 	}
 
 	emitSoundAction(player, action = Sound.playbackActions.play, data) {
@@ -66,6 +87,7 @@ class Sound extends EventEmitter {
 }
 
 class SoundManager {
+	/** */
 	constructor(game) {
 		this.sounds = new Set()
 		this.nextNetId = 0
@@ -84,7 +106,7 @@ class SoundManager {
 		range: ["D", "float"],
 		is3D: ["E", "bool"],
 		isGlobal: ["F", "bool"],
-		playbackPosition: ["G", "float"]
+		playbackPosition: ["G", "float"],
 	}
 
 	newSound(sound) {
@@ -92,7 +114,7 @@ class SoundManager {
 		this.sounds.add(sound)
 		this.nextNetId += 1
 		if (this.game) {
-			this.game.players.forEach(player => {
+			this.game.players.forEach((player) => {
 				this.sendSoundDefinitions(player, [sound])
 			})
 		}
@@ -100,14 +122,14 @@ class SoundManager {
 			sound.removeAllListeners()
 			this.sounds.delete(sound)
 			if (this.game) {
-				this.game.players.forEach(player => {
+				this.game.players.forEach((player) => {
 					sound.emitSoundAction(player, Sound.playbackActions.destroy)
 				})
 			}
 		})
 		sound.on("actionAll", (action) => {
 			if (this.game) {
-				this.game.players.forEach(player => {
+				this.game.players.forEach((player) => {
 					sound.emitSoundAction(player, action)
 				})
 			}
@@ -115,7 +137,7 @@ class SoundManager {
 	}
 
 	sendSoundDefinitions(player, sounds = [...this.sounds]) {
-		sounds.forEach(sound => {
+		sounds.forEach((sound) => {
 			const soundDefiniton = new PacketBuilder(23)
 			soundDefiniton.write("uint32", 1)
 			soundDefiniton.write("uint32", sound.netId)
