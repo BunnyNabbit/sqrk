@@ -1,0 +1,7 @@
+{
+	"main": "index.cjs",
+	"devDependencies": {
+		"prettier": "^3.5.3",
+		"prettier-plugin-drone-class": "^0.1.0"
+	}
+}
