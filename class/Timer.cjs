@@ -1,6 +1,7 @@
 const { EventEmitter } = require("events")
 
 /**Timer class that extends EventEmitter to provide timing functionality.
+ *
  * @extends EventEmitter
  */
 class Timer extends EventEmitter {
@@ -14,6 +15,7 @@ class Timer extends EventEmitter {
 		this.pauseTime = null
 	}
 	/**Gets the remaining time in milliseconds.
+	 *
 	 * @returns {number} The remaining time in milliseconds.
 	 */
 	get timeLeft() {
@@ -38,6 +40,7 @@ class Timer extends EventEmitter {
 		clearTimeout(this.timeout)
 	}
 	/**Extends the timer by a specified number of milliseconds.
+	 *
 	 * @param {number} ms - The number of milliseconds to extend the timer by.
 	 */
 	extend(ms) {
@@ -46,6 +49,7 @@ class Timer extends EventEmitter {
 		this.emit("extend", ms)
 	}
 	/**Sets the timer to end at a specified time.
+	 *
 	 * @param {number} timeEnd - The time in milliseconds when the timer should end.
 	 */
 	set(timeEnd) {
