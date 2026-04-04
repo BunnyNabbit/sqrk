@@ -1,8 +1,9 @@
-const { PacketBuilder, Vector3 } = require("node-hill-s")
-const EventEmitter = require("node:events")
+import nh from "node-hill-s"
+import { EventEmitter } from "node:events"
+const { Bot, Vector3 } = nh
 
-class Sound extends EventEmitter {
-	/** */
+export class Sound extends EventEmitter {
+	/** @param {{ volume: number; pitch: number; loop: boolean; range: number; is3D: boolean; isGlobal: boolean; uuid: string; position: any; playing: boolean }} data */
 	constructor(data) {
 		super()
 		this.volume = data.volume ?? 1
@@ -13,6 +14,7 @@ class Sound extends EventEmitter {
 		this.isGlobal = data.isGlobal ?? false
 		this.uuid = data.uuid
 		this.position = data.position ?? new Vector3(1, 2, 3)
+		this.PacketBuilder = data.PacketBuilder
 		if (data.playing) this.playbackPosition = 0
 		this.destroyed = false
 	}
@@ -74,7 +76,7 @@ class Sound extends EventEmitter {
 	}
 
 	emitSoundAction(player, action = Sound.playbackActions.play, data) {
-		const packet = new PacketBuilder(22)
+		const packet = new this.PacketBuilder(22)
 		packet.write("uint32", this.netId)
 		packet.write("string", action[0])
 		action[1](packet, data) // call action handler
@@ -86,8 +88,8 @@ class Sound extends EventEmitter {
 	}
 }
 
-class SoundManager {
-	/** */
+export class SoundManager {
+	/**/
 	constructor(game) {
 		this.sounds = new Set()
 		this.nextNetId = 0
@@ -138,29 +140,24 @@ class SoundManager {
 
 	sendSoundDefinitions(player, sounds = [...this.sounds]) {
 		sounds.forEach((sound) => {
-			const soundDefiniton = new PacketBuilder(23)
-			soundDefiniton.write("uint32", 1)
-			soundDefiniton.write("uint32", sound.netId)
-			soundDefiniton.write("string", sound.uuid)
-			soundDefiniton.write("float", sound.position.x)
-			soundDefiniton.write("float", sound.position.y)
-			soundDefiniton.write("float", sound.position.z)
+			const soundDefinition = new this.PacketBuilder(23)
+			soundDefinition.write("uint32", 1)
+			soundDefinition.write("uint32", sound.netId)
+			soundDefinition.write("string", sound.uuid)
+			soundDefinition.write("float", sound.position.x)
+			soundDefinition.write("float", sound.position.y)
+			soundDefinition.write("float", sound.position.z)
 			let attributeString = ""
 			for (const [key, value] of Object.entries(sound)) {
 				const mapping = SoundManager.attributePacketMapping[key]
 				if (mapping) attributeString += mapping[0]
 			}
-			soundDefiniton.write("string", attributeString)
+			soundDefinition.write("string", attributeString)
 			for (const [key, value] of Object.entries(sound)) {
 				const mapping = SoundManager.attributePacketMapping[key]
-				if (mapping) soundDefiniton.write(mapping[1], value)
+				if (mapping) soundDefinition.write(mapping[1], value)
 			}
-			soundDefiniton.send(player.socket)
+			soundDefinition.send(player.socket)
 		})
 	}
-}
-
-module.exports = {
-	SoundManager,
-	Sound,
 }

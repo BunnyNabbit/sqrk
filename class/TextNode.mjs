@@ -1,7 +1,7 @@
-const { Bot, Vector3 } = require("node-hill-s")
-
-class TextNode {
-	/** */
+import nh from "node-hill-s"
+const { Bot } = nh
+export class TextNode {
+	/**/
 	constructor(game, position = new Vector3(0, 0, 0), text) {
 		this.game = game
 		this.bot = null
@@ -33,4 +33,4 @@ class TextNode {
 	}
 }
 
-module.exports = TextNode
+export default TextNode

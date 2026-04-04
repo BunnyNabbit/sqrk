@@ -1,10 +1,10 @@
-const { EventEmitter } = require("events")
+import { EventEmitter } from "node:events"
 
 /**Timer class that extends EventEmitter to provide timing functionality.
  *
  * @extends EventEmitter
  */
-class Timer extends EventEmitter {
+export class Timer extends EventEmitter {
 	/** Creates an instance of Timer. */
 	constructor() {
 		super()
@@ -79,4 +79,4 @@ class Timer extends EventEmitter {
 	}
 }
 
-module.exports = Timer
+export default Timer

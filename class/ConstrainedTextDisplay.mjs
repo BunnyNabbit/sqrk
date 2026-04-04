@@ -1,7 +1,7 @@
-const getFontLength = require("../getFontLength.cjs")
+import getFontLength from "../getFontLength.mjs"
 
-class ConstrainedTextDisplay {
-	/** */
+export class ConstrainedTextDisplay {
+	/**/
 	constructor(sections, maxFontLength = 350) {
 		this.sections = sections
 		this.maxFontLength = maxFontLength
@@ -72,4 +72,4 @@ class ConstrainedTextDisplay {
 	}
 }
 
-module.exports = ConstrainedTextDisplay
+export default ConstrainedTextDisplay

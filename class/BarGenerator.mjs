@@ -1,5 +1,5 @@
-class BarGenerator {
-	/** */
+export class BarGenerator {
+	/**/
 	constructor(props) {
 		this.fullColor = props.fullColor ?? "\\c5"
 		this.emptyColor = props.emptyColor ?? "\\c0"
@@ -21,4 +21,4 @@ class BarGenerator {
 	}
 }
 
-module.exports = BarGenerator
+export default BarGenerator

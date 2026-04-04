@@ -2,16 +2,34 @@
 	"name": "sqrk",
 	"version": "0.0.0",
 	"description": "Various helpers.",
-	"main": "index.cjs",
+	"main": "index.mjs",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+		"build-docs": "typedoc",
+		"type-check": "tsc --noEmit"
 	},
+	"homepage": "https://bunnynabbit.github.io/sqrk/",
 	"keywords": [],
 	"author": "BunnyNabbit \"Aon Langton\"",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/BunnyNabbit/sqrk.git"
+	},
 	"packageManager": "pnpm@10.33.0",
 	"devDependencies": {
+		"@types/jest": "^30.0.0",
+		"@types/node": "^24.12.2",
+		"cross-env": "^10.1.0",
+		"jest": "^30.3.0",
+		"node-hill-s-types": "^13.4.7",
 		"prettier": "^3.5.3",
-		"prettier-plugin-drone-class": "^0.1.0"
+		"prettier-plugin-drone-class": "^0.1.0",
+		"prettier-plugin-drone-jsdoc": "^1.8.0",
+		"typedoc": "^0.28.18",
+		"typescript": "^6.0.2"
+	},
+	"peerDependencies": {
+		"node-hill-s": "^13.5.1"
 	}
 }
