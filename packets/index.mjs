@@ -1,5 +1,7 @@
 // @ts-check
-import { PacketBuilder } from "node-hill-s"
+import nh from "node-hill-s"
+const { PacketBuilder } = nh
+
 /** Sends a brick kill packet to all connected clients */
 export function killBrick(brick, time = 10000) {
 	new PacketBuilder("Brick")

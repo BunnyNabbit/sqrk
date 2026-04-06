@@ -1,6 +1,6 @@
 import nh from "node-hill-s"
 import { EventEmitter } from "node:events"
-const { Bot, Vector3 } = nh
+const { Vector3, PacketBuilder } = nh
 
 export class Sound extends EventEmitter {
 	/** @param {{ volume: number; pitch: number; loop: boolean; range: number; is3D: boolean; isGlobal: boolean; uuid: string; position: any; playing: boolean }} data */
@@ -14,7 +14,6 @@ export class Sound extends EventEmitter {
 		this.isGlobal = data.isGlobal ?? false
 		this.uuid = data.uuid
 		this.position = data.position ?? new Vector3(1, 2, 3)
-		this.PacketBuilder = data.PacketBuilder
 		if (data.playing) this.playbackPosition = 0
 		this.destroyed = false
 	}
@@ -76,7 +75,7 @@ export class Sound extends EventEmitter {
 	}
 
 	emitSoundAction(player, action = Sound.playbackActions.play, data) {
-		const packet = new this.PacketBuilder(22)
+		const packet = new PacketBuilder(22)
 		packet.write("uint32", this.netId)
 		packet.write("string", action[0])
 		action[1](packet, data) // call action handler
@@ -140,7 +139,7 @@ export class SoundManager {
 
 	sendSoundDefinitions(player, sounds = [...this.sounds]) {
 		sounds.forEach((sound) => {
-			const soundDefinition = new this.PacketBuilder(23)
+			const soundDefinition = new PacketBuilder(23)
 			soundDefinition.write("uint32", 1)
 			soundDefinition.write("uint32", sound.netId)
 			soundDefinition.write("string", sound.uuid)
