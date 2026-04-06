@@ -1,3 +1,4 @@
+// @ts-check
 import getFontLength from "../getFontLength.mjs"
 
 export class ConstrainedTextDisplay {
