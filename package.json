@@ -1,6 +1,6 @@
 {
 	"name": "@bunnynabbit/sqrk",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "Various helpers.",
 	"main": "index.mjs",
 	"scripts": {
